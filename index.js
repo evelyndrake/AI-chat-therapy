@@ -41,7 +41,7 @@ function askQuestion(query) {
 }
 
 async function generateText(response, ai_response) {
-    const ai_prompt = "You are a simulated chat AI used to help me practice setting boundaries. Your previous response was"  + ai_response + " and my previous response to this was " + response + ". Give a single line response given this information, formatted as a casual text from a friend. You should be forceful and push back on what I'm saying a lot, just for practice.";
+    const ai_prompt = "You are a simulated chat AI used to help me practice setting boundaries. Your previous response was"  + ai_response + " and my previous response to this was " + response + ". Give a single line response given this information, formatted as a casual text from a friend. You should be forceful and push back on what I'm saying a lot, just for practice. Text very casually (lowercase, abbreviations when makes sense to do so) like you're 17-21. Don't lay that on too thick though.";
     var result;
     result = await model.generateContent(ai_prompt);
     return result.response.text();
