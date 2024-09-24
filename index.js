@@ -1,4 +1,4 @@
-const { GoogleGenerativeAI, HarmCategory, HarmBlockThreshold } = require("@google/generative-ai");
+const { GoogleGenerativeAI, HarmCategory, HarmBlockThreshold, ModelContent } = require("@google/generative-ai");
 env = require('dotenv').config();
 const readline = require('readline');
 const genAI = new GoogleGenerativeAI(process.env.API_KEY);
@@ -22,11 +22,8 @@ const safetySettings = [
     }
   ];
 
-
 const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash", safetySettings: safetySettings });
-
-
-  
+let chat = model.startChat();
 
 function askQuestion(query) {
     const rl = readline.createInterface({
@@ -40,24 +37,24 @@ function askQuestion(query) {
     }))
 }
 
-async function generateText(response, ai_response) {
-    const ai_prompt = "You are a simulated chat AI used to help me practice setting boundaries. Your previous response was"  + ai_response + " and my previous response to this was " + response + ". Give a single line response given this information, formatted as a casual text from a friend. You should be forceful and push back on what I'm saying a lot, just for practice. Text very casually (lowercase, abbreviations when makes sense to do so) like you're 17-21. Don't lay that on too thick though.";
+async function generateText(response) {
     var result;
-    result = await model.generateContent(ai_prompt);
-    return result.response.text();
+    result = await chat.sendMessage(response);
+    // Remove line break characters
+    var text = result.response.text().replace(/(\r\n|\n|\r)/gm, "");
+    return text;
 }
 
 async function main() {
+    await chat.sendMessage("You are a simulated chat AI used to help me practice setting boundaries. Give a single line response given this information, formatted as a casual text from a friend. You should be forceful and push back on what I'm saying a lot, just for practice. Text very casually (lowercase, abbreviations when makes sense to do so).");
     var yourResponse = "Hello!";
-    
-    // Disable prompt autocomplete
-    var previousAiResponse = await generateText(yourResponse, previousAiResponse);
+    var previousAiResponse = "Starting simulation..."
+    // var previousAiResponse = await generateText(yourResponse, previousAiResponse);
     // Begin loop with prompt for user input
     while (true) {
         console.log("AI Response: " + previousAiResponse);
         // Prompt and wait for input
         yourResponse = await askQuestion("Your response: ");
-
         previousAiResponse = await generateText(yourResponse, previousAiResponse);
     }
 }   
